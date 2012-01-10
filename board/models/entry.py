@@ -11,6 +11,7 @@ class Entry(db.Model):
     text = db.Column(db.Text, nullable=False)
     created_date = db.Column(db.DateTime, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('t_user.id'), nullable=False)
+    user = db.relationship('User', backref='entry', lazy='join')
     #updateed_date = db.Column(db.DateTime,  onupdate=db.func.current_timestamp())
 
     def __init__(self, title, text, user_id):

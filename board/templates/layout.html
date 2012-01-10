@@ -10,30 +10,32 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" />
-<link rel="stylesheet" href="{{ url_for('.static', filename='css/style.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 {% endblock %}
 </head>
 <body>
     <div class="topbar">
       <div class="fill">
         <div class="container">
-          <a class="brand" href="{{ url_for('index') }}">掲示板テスト</a>
+          <a class="brand" href="{{ url_for('.index') }}">掲示板テスト</a>
           <ul class="nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            {% if not session['user'] %}
+            <li class="active"><a href="{{ url_for('.add_user') }}">ユーザ登録</a></li>
+            {% else: %}
+            <li><a href="{{ url_for('.add_entry') }}">コメント追加</a></li>
+            {% endif %}
           </ul>
-            {% if not session.logged_in  %}
-          <form action="{{ url_for('login') }}" method="POST" class="pull-right">
+          {% if not session['user']  %}
+          <form action="{{ url_for('.login') }}" method="POST" class="pull-right">
             <input class="input-small" type="text" name="username" placeholder="Username">
             <input class="input-small" type="password"  name="password" placeholder="Password">
             <button class="btn" type="submit">ログイン</button>
           </form>
-            {% else %}
-          <form action="{{ url_for('logout') }}" method="GET" class="pull-right">
+          {% else %}
+          <form action="{{ url_for('.logout') }}" method="GET" class="pull-right">
             <button class="btn" type="submit">ログアウト</button>
           </form>
-            {% endif %}
+          {% endif %}
         </div>
       </div>
     </div>
@@ -43,9 +45,10 @@
           <h1>THE 掲示板 <small>ただの掲示板のテストですよ。</small></h1>
         </div>
         <div class="row">
-          <div class="span10">
+          <div class="span14">
             {% for message in get_flashed_messages() %}
             <div class="alert-message block-message info">
+              <a class="close" href="#">&times;</a>
               <p>{{ message }}</p>
             </div>
             {% endfor %}
@@ -54,16 +57,9 @@
               <p>{{ error }}</p>
             </div>
             {% endif %}
-            {% block body %} {% endblock %}
           </div>
-          <div class="span4">
-            <h3>メニュー</h3>
-            <ul>
-                <li><a href="{{ url_for('add_user') }}">ユーザ登録</a></li>
-                {% if session.logged_in %}
-                <li><a href="{{ url_for('add_entry') }}">コメント追加</a></li>
-                {% endif %}
-            </ul>
+          <div class="span14">
+            {% block body %} {% endblock %}
           </div>
         </div>
       </div>

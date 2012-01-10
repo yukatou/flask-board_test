@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from werkzeug import generate_password_hash, check_password_hash
 from board import db
 
 class User(db.Model):
@@ -8,21 +9,20 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(32), nullable=False, unique=True)
-    password = db.Column(db.String(32), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False, unique=True)
     created_date = db.Column(db.DateTime, default=db.func.now())
-    entry = db.relationship('Entry', backref='user', lazy='join')
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.password = generate_password_hash(password)
 
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
     def save(self):
         db.session.add(self)
         db.session.commit()
-
-    def getByUsername(self, username=None):
-        return self.query.filter_by(username=username).first()
 

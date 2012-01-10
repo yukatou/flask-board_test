@@ -3,16 +3,16 @@
 
 class Config(object):
     DEBUG = False
-    SECRET_KEY = 'development key'
+    SECRET_KEY = 'secret_key'
     SQLALCHEMY_DATABASE_URI = 'mysql://yukatou:yukatou@192.168.0.12/dev_yukatou'
 
-class Production(Config):
+class ProductionConfig(Config):
     pass
 
-class Development(Config):
+class DevelopmentConfig(Config):
     DEBUG = True
 
-class Test(Config):
+class TestConfig(Config):
     TESTING = True
 
 
